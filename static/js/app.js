@@ -3,6 +3,7 @@ url_boards = url_api + "get-boards";
 url_cards = url_api + "get-cards/";
 
 
+document.addEventListener("DOMContentLoaded",createBoards)
 
 function createBoards() {
     let button = document.querySelector('#sendBoardTitle');
@@ -12,7 +13,6 @@ function createBoards() {
         sendBoard(titleDict);
     });
 }
-
 const sendBoard = async (data) => {
     const location = window.location + 'api/create-board'
     const setting =
@@ -27,7 +27,6 @@ const sendBoard = async (data) => {
     const response = await fetch(location, setting)
     if (!response.ok) throw Error(response.message);
 }
-createBoards();
 
 function getBoards() {
     fetch(url_boards)
