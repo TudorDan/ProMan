@@ -56,9 +56,10 @@ def update_card():
 
 # receives (title)
 # returns json
-@app.route('/api/create-board')
+@app.route('/api/create-board', methods=['POST'])
 def create_board():
     request_content = request.json
+    print(request_content)
     title = request_content['title']
     boards_manager.create_board(title)
     return jsonify({'success': True})

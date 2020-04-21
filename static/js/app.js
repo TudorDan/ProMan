@@ -8,9 +8,24 @@ function createBoards() {
     let button = document.querySelector('#sendBoardTitle');
     button.addEventListener('click', (e) => {
         let title = document.querySelector('#title').value;
-        console.log(title);
-        e.preventDefault();
+        let titleDict = { 'title': title }
+        sendBoard(titleDict);
     });
+}
+
+const sendBoard = async (data) => {
+    const location = window.location + 'api/create-board'
+    const setting =
+        {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        }
+    const response = await fetch(location, setting)
+    if (!response.ok) throw Error(response.message);
 }
 createBoards();
 
