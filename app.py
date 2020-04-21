@@ -5,7 +5,7 @@ import boards_manager
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
     return render_template("index.html")
 
@@ -105,5 +105,5 @@ def delete_card():
 if __name__ == "__main__":
     app.run(
         debug=True,
-        host='0.0.0.0'
+        host='127.0.0.1'
     )
