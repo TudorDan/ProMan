@@ -1,7 +1,7 @@
 url_api = 'http://127.0.0.1:5000/api/';
 url_boards = url_api + "get-boards";
 url_cards = url_api + "get-cards/";
-
+url_statuses = url_api + '/get-statuses';
 
 document.addEventListener("DOMContentLoaded",createBoards)
 
@@ -84,15 +84,12 @@ function showBoards(boards) {
          class="showcards" data-toggle="collapse" onClick="getCardsForBoard(` + board.id + `) ">▼</a>
         </div>
         <div class="collapse" id="collapseExample`+ board.id + `">
-        <button type="button" id="addColumn" class="btn btn-success btn-sm ml-5 float-left" data-toggle="modal" data-target="#statusModal" onclick="newColumn(${board.id})">Add Column</button><br><br>
+        <button type="button" id="addColumn" class="btn btn-success btn-sm ml-5 float-left" data-toggle="modal"
+            data-target="#statusModal" onclick="newColumn(${board.id})">Add Column</button><br><br>
          <div class="card card-body mb-5" >
             <table class="table-${board.id} table-bordered">
-            <thead>
+            <thead> 
             <tr class="tableHeadrow-${board.id}">
-                <th class="col" contenteditable="true" style="width: 25%">New</th>
-                <th class="col" contenteditable="true" style="width: 25%">In Progress</th>
-                <th class="col" contenteditable="true" style="width: 25%">Testing</th>
-                <th class="col" contenteditable="true" style="width: 25%">Done</th>
             </tr>
             <tbody class="tablebody-${board.id}" >
             
@@ -104,20 +101,22 @@ function showBoards(boards) {
         </div>
         </div>`
         boards_container.innerHTML += card_template;
+        getStatuses(board.id)
     }
 }
 
 function newColumn (boardid) {
-    let tablehead = document.querySelector(".tableHeadrow-" + boardid)
-    console.log(tablehead)
-    let th = `<th class="col" contenteditable="true" style="width: 25%"> New Column</th>`
-    tablehead.innerHTML += th;
+    // let tablehead = document.querySelector(".tableHeadrow-" + boardid)
+    // console.log(tablehead)
+    // let th = `<th class="col" contenteditable="true" style="width: 25%"> New Column</th>`
+    // tablehead.innerHTML += th;
 
     let button = document.querySelector('#sendStatusTitle');
     button.addEventListener('click', (e) => {
         let title = document.querySelector('#StatusTitle').value;
         console.log(title)
-        let titleDict = { 'title': title }
+        let titleDict = { 'title': title,
+                          'board_id' :boardid}
         sendStatus(titleDict);
     });
 
@@ -136,8 +135,6 @@ const sendStatus = async (data) => {
     const response = await fetch(location, setting)
     if (!response.ok) throw Error(response.message);
 }
-
-
 
 function updateBoardTitle(boardId) {
     elementToSelect = "board-title-" + boardId;
@@ -166,7 +163,29 @@ function updateBoardTitle(boardId) {
         })
 }
 
+function getStatuses (boardid){
+    fetch(url_statuses)
+        .then((serverResponse) => {
+            return serverResponse.json();
+        })
+        .then((jsonResponse) => {
+            console.log(jsonResponse);
+            makeTableHeaders(jsonResponse,boardid)
+        });
+}
 
+function makeTableHeaders (statuses,boardid){
+    let table = document.querySelector(".tableHeadrow-" + boardid)
+    for (let status of statuses) {
+        let th = '';
+        if (status.board_id === boardid) {
+            th += `<th class="col" contenteditable="true" style="width: 25%"> ${status.title} </th>`
+            table.innerHTML += th;
+        } else {
+            th = ""
+        }
+    }
+}
 
 
 getBoards();

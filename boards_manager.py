@@ -11,12 +11,13 @@ def get_statuses(cursor):
     return cursor.fetchall()
 
 @db.use
-def insert_status(cursor, title):
+def insert_status(cursor, title, board_id):
     query = """
-    INSERT INTO statuses (title) VALUES (%(title)s);
+    INSERT INTO statuses (title, board_id) VALUES (%(title)s, %(board_id)s);
     """
     return cursor.execute(query, {
-        'title': title
+        'title': title,
+        'board_id': board_id
     })
 
 @db.use
