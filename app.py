@@ -41,6 +41,8 @@ def get_data():
 # returns json object
 @app.route('/api/get-cards/<board_id>')
 def get_cards(board_id):
+    details = boards_manager.get_cards(board_id)
+    print(details)
     return jsonify(boards_manager.get_cards(board_id))
 
 
