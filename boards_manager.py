@@ -10,6 +10,23 @@ def get_statuses(cursor):
     cursor.execute(query)
     return cursor.fetchall()
 
+@db.use
+def insert_status(cursor, title):
+    query = """
+    INSERT INTO statuses (title) VALUES (%(title)s);
+    """
+    return cursor.execute(query, {
+        'title': title
+    })
+
+@db.use
+def create_board(cursor, title):
+    query = """
+        INSERT INTO boards (title) VALUES (%(title)s);
+    """
+    return cursor.execute(query, {
+        'title': title
+    })
 
 @db.use
 def get_boards(cursor):
@@ -51,14 +68,7 @@ def update_board(cursor, data):
     })
 
 
-@db.use
-def create_board(cursor, title):
-    query = """
-        INSERT INTO boards (title) VALUES (%(title)s);
-    """
-    return cursor.execute(query, {
-        'title': title
-    })
+
 
 
 @db.use

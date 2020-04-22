@@ -46,8 +46,32 @@ function getCardsForBoard(id) {
         })
         .then((jsonResponse) => {
             console.table(jsonResponse);
+            showCards(jsonResponse)
         });
 
+}
+
+function showCards(cards) {
+    for (let card of cards) {
+        let table_header = document.querySelector('.tableHeadrow-' + card.board_id);
+        let len = table_header.children.length;
+        let card_container = document.querySelector('.tablebody-' + card.board_id);
+        card_container.innerHTML = '';
+        let tr = '';
+        for (let i = 1; i <= len; i++) {
+            if (parseInt(card.status_id) === i) {
+                tr += `<td>${card.card_title}</td>`;
+            } else {
+                tr += `<td></td>`;
+            }
+        }
+        let card_template = `
+        <tr>
+            ${tr}
+        </tr>
+        `;
+        card_container.innerHTML += card_template;
+    }
 }
 
 function showBoards(boards) {
@@ -60,11 +84,19 @@ function showBoards(boards) {
          class="showcards" data-toggle="collapse" onClick="getCardsForBoard(` + board.id + `) ">▼</a>
         </div>
         <div class="collapse" id="collapseExample`+ board.id + `">
-        <button type="button" class="btn btn-success btn-sm ml-5 float-left" onclick="newColumn(${board.id})">Add Column</button><br><br>
+        <button type="button" id="addColumn" class="btn btn-success btn-sm ml-5 float-left" data-toggle="modal" data-target="#statusModal" onclick="newColumn(${board.id})">Add Column</button><br><br>
          <div class="card card-body mb-5" >
-            <table class="table table-bordered">
-            <thead >
-            <tr class="tableHead-${board.id}">
+            <table class="table-${board.id} table-bordered">
+            <thead>
+            <tr class="tableHeadrow-${board.id}">
+                <th class="col" contenteditable="true" style="width: 25%">New</th>
+                <th class="col" contenteditable="true" style="width: 25%">In Progress</th>
+                <th class="col" contenteditable="true" style="width: 25%">Testing</th>
+                <th class="col" contenteditable="true" style="width: 25%">Done</th>
+            </tr>
+            <tbody class="tablebody-${board.id}" >
+            
+            </tbody>
             </tr>
             </thead>
             </table>
@@ -76,11 +108,35 @@ function showBoards(boards) {
 }
 
 function newColumn (boardid) {
-    let tablehead = document.querySelector(".tableHead-" + boardid)
+    let tablehead = document.querySelector(".tableHeadrow-" + boardid)
     console.log(tablehead)
     let th = `<th class="col" contenteditable="true" style="width: 25%"> New Column</th>`
     tablehead.innerHTML += th;
+
+    let button = document.querySelector('#sendStatusTitle');
+    button.addEventListener('click', (e) => {
+        let title = document.querySelector('#StatusTitle').value;
+        console.log(title)
+        let titleDict = { 'title': title }
+        sendStatus(titleDict);
+    });
+
 }
+const sendStatus = async (data) => {
+    const location = window.location + 'api/create-status'
+    const setting =
+        {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        }
+    const response = await fetch(location, setting)
+    if (!response.ok) throw Error(response.message);
+}
+
 
 
 function updateBoardTitle(boardId) {
