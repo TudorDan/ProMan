@@ -38,7 +38,6 @@ function getBoards() {
         });
 }
 
-
 function getCardsForBoard(id) {
     //fetch
     fetch(url_cards + id)
@@ -51,39 +50,6 @@ function getCardsForBoard(id) {
 
 }
 
-
-
-
-
-
-
-// function showCards(cards) {
-//     let collapse = document.createElement('div');
-//     collapse.setAttribute("class", "collapse")
-//     collapse.setAttribute("id", "collapse")
-//     let table = document.createElement('table')
-//     let tableHeader = document.createElement('thead')
-//     let tableHeadRow = document.createElement('tr')
-//     let ths = `<th>New</th>
-//                 <th>In Progress</th>
-//                 <th>Testing</th>
-//                 <th>Done</th>`
-//     tableHeadRow.innerHTML = ths
-//     tableHeader.appendChild(tableHeadRow)
-//     table.appendChild(tableHeader)
-//     for (let card of cards){
-//         let tbody = `<tbody>
-//                        <tr>
-//                        <td>${card.card_title}</td>
-//                         </tr>
-//                     </tbody>`
-//         table.innerHTML +=tbody
-//     }
-//     collapse.appendChild(table)
-//
-// }
-
-
 function showBoards(boards) {
     for (board of boards) {
         boards_container = document.getElementById('boards-container');
@@ -91,17 +57,14 @@ function showBoards(boards) {
         <div class="card-body" >
         <h5 class="card-title" id="board-title-` + board.id + `" contenteditable="true" onfocusout="updateBoardTitle(` + board.id + `)">` + board.title + `</h5>
         <a href="#collapseExample`+ board.id + `" role="button" aria-expanded="false" aria-controls="collapseExample`+ board.id + `"
-         class="showcards" data-toggle="collapse" onClick="getCardsForBoard(` + board.id + `)">▼</a>
+         class="showcards" data-toggle="collapse" onClick="getCardsForBoard(` + board.id + `) ">▼</a>
         </div>
         <div class="collapse" id="collapseExample`+ board.id + `">
+        <button type="button" class="btn btn-success btn-sm ml-5 float-left" onclick="newColumn(${board.id})">Add Column</button><br><br>
          <div class="card card-body mb-5" >
             <table class="table table-bordered">
-            <thead>
-            <tr>
-            <th scope="col" style="width: 25%">New</th>
-            <th scope="col" style="width: 25%">In Progress</th>
-            <th scope="col" style="width: 25%">Testing</th>
-            <th scope="col" style="width: 25%">Done</th>
+            <thead >
+            <tr class="tableHead-${board.id}">
             </tr>
             </thead>
             </table>
@@ -111,6 +74,14 @@ function showBoards(boards) {
         boards_container.innerHTML += card_template;
     }
 }
+
+function newColumn (boardid) {
+    let tablehead = document.querySelector(".tableHead-" + boardid)
+    console.log(tablehead)
+    let th = `<th class="col" contenteditable="true" style="width: 25%"> New Column</th>`
+    tablehead.innerHTML += th;
+}
+
 
 function updateBoardTitle(boardId) {
     elementToSelect = "board-title-" + boardId;
@@ -138,6 +109,8 @@ function updateBoardTitle(boardId) {
             console.log(jsonResponse);
         })
 }
+
+
 
 
 getBoards();
