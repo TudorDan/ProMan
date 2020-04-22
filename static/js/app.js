@@ -75,100 +75,130 @@ function showCards(cards) {
     }
 }
 
-    function addCardsToColumn(container) {
-        const cardElement = createCard(
-            'New',
-            'Task 1');
-        document.querySelector(`#${container}`).appendChild(cardElement);
-    }
+function addCardsToColumn(container) {
+    const cardElement = createCard(
+        'New',
+        'Task 1');
+    document.querySelector(`#${container}`).appendChild(cardElement);
+}
 
-    const createCard = function (title, text) {
-        const container = document.createElement('div');
-        container.classList.add('card');
+const createCard = function (title, text) {
+    const container = document.createElement('div');
+    container.classList.add('card');
 
-        const cardBody = document.createElement('div');
-        cardBody.classList.add('card-body');
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
 
-        const cardTitle = document.createElement('h5');
-        cardTitle.classList.add('card-title');
-        cardTitle.textContent = title;
-        cardBody.appendChild(cardTitle);
+    const cardTitle = document.createElement('h5');
+    cardTitle.classList.add('card-title');
+    cardTitle.textContent = title;
+    cardBody.appendChild(cardTitle);
 
-        const cardText = document.createElement('p');
-        cardText.classList.add('card-text');
-        cardText.textContent = text;
-        cardBody.appendChild(cardText);
+    const cardText = document.createElement('p');
+    cardText.classList.add('card-text');
+    cardText.textContent = text;
+    cardBody.appendChild(cardText);
 
-        container.appendChild(cardBody);
+    container.appendChild(cardBody);
 
-        return container;
-    };
+    return container;
+};
 
-    function showBoards(boards) {
-        for (board of boards) {
-            boards_container = document.getElementById('boards-container');
-            card_template = `<div class="card mb-2">
-        <div class="card-body" >
-        <h5 class="card-title" id="board-title-` + board.id + `" contenteditable="true" onfocusout="updateBoardTitle(` + board.id + `)">` + board.title + `</h5>
-        <a href="#collapseExample` + board.id + `" role="button" aria-expanded="false" aria-controls="collapseExample` + board.id + `"
-         class="showcards" data-toggle="collapse" onClick="getCardsForBoard(` + board.id + `) ">▼</a>
-        </div>
-        <div class="collapse" id="collapseExample` + board.id + `">
-        <button type="button" class="btn btn-success btn-sm ml-5 float-left" onclick="newColumn(${board.id})">Add Column</button><br><br>
-         <div class="card card-body mb-5" >
-            <button type="button" class="btn btn-outline-success taskButton">Add Card</button>
-            <table class="table table-bordered table-dark">
-                <thead >
-                    <tr class="tableHead-${board.id}">
-                        <th>New</th>
-                        <th>In progress</th>
-                        <th>Testing</th>
-                        <th>Done</th>
-                    </tr>
-                </thead>
-                <tbody class="tablebody-${board.id}"></tbody>
-            </table>
-        </div>
-        </div>
+function showBoards(boards) {
+    for (board of boards) {
+        boards_container = document.getElementById('boards-container');
+        card_template = `
+        <div class="card mb-2">
+            <div class="card-body" >
+                <h5 class="card-title" id="board-title-` + board.id + `" contenteditable="true" 
+                onfocusout="updateBoardTitle(` + board.id + `)">` + board.title + `</h5>
+                
+                <a href="#collapseExample` + board.id + `" role="button" aria-expanded="false" 
+                aria-controls="collapseExample` + board.id + `"
+                 class="showcards" data-toggle="collapse" onClick="getCardsForBoard(` + board.id + `) ">▼</a>
+            </div>
+            
+            <div class="collapse" id="collapseExample` + board.id + `">
+                <button type="button" class="btn btn-success btn-sm ml-5 float-left" data-toggle="modal" 
+                data-target="#statusModal" onclick="newColumn(${board.id})">Add Column</button><br><br>
+                
+                 <div class="card card-body mb-5" >
+                    <button type="button" class="btn btn-outline-success taskButton">Add Card</button>
+                    <table class="table table-bordered table-dark">
+                        <thead >
+                            <tr class="tableHead-${board.id}">
+                                <th>New</th>
+                                <th>In progress</th>
+                                <th>Testing</th>
+                                <th>Done</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tablebody-${board.id}"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>`
-            boards_container.innerHTML += card_template;
-        }
+        boards_container.innerHTML += card_template;
     }
+}
 
-    function newColumn(boardid) {
-        let tablehead = document.querySelector(".tableHead-" + boardid)
-        console.log(tablehead)
-        let th = `<th class="col" contenteditable="true" style="width: 25%">Type status</th>`
-        tablehead.innerHTML += th;
-    }
+function newColumn(boardid) {
+    let button = document.querySelector('#sendStatusTitle');
+    button.addEventListener('click', (e) => {
+        let title = document.querySelector('#statusTitle').value;
+        let titleDict = {'title': title}
+        sendStatus(titleDict);
+    });
 
+    let tablehead = document.querySelector(".tableHead-" + boardid)
+    console.log(tablehead)
+    let th = `<th class="col" contenteditable="true" style="width: 25%">Type status</th>`
+    tablehead.innerHTML += th;
+}
 
-    function updateBoardTitle(boardId) {
-        elementToSelect = "board-title-" + boardId;
-        titleValue = document.getElementById(elementToSelect);
-
-        data = {
-            'id': boardId,
-            'title': titleValue.innerText,
-        }
-
-        settings = {
-            'method': 'POST',
-            'headers': {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+const sendStatus = async (data) => {
+    const location = window.location + 'api/create-status'
+    const setting =
+        {
+            method: 'POST',
             body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
         }
+    const response = await fetch(location, setting)
+    if (!response.ok) throw Error(response.message);
 
-        fetch('/api/update-board', settings)
-            .then((serverResponse) => {
-                return serverResponse.json();
-            })
-            .then((jsonResponse) => {
-                console.log(jsonResponse);
-            })
+}
+
+
+function updateBoardTitle(boardId) {
+    elementToSelect = "board-title-" + boardId;
+    titleValue = document.getElementById(elementToSelect);
+
+    data = {
+        'id': boardId,
+        'title': titleValue.innerText,
     }
 
+    settings = {
+        'method': 'POST',
+        'headers': {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(data),
+    }
 
-    getBoards();
+    fetch('/api/update-board', settings)
+        .then((serverResponse) => {
+            return serverResponse.json();
+        })
+        .then((jsonResponse) => {
+            console.log(jsonResponse);
+        })
+}
+
+
+getBoards();

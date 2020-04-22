@@ -67,6 +67,14 @@ def create_board():
     return jsonify({'success': True})
 
 
+@app.route('/api/create-status', methods=['POST'])
+def create_status():
+    request_content = request.json
+    title = request_content['title']
+    boards_manager.insert_status(title)
+    return jsonify({'success': True})
+
+
 # receives (board_id, title, status_id)
 # returns json
 @app.route('/api/create-card')

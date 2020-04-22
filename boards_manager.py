@@ -62,6 +62,16 @@ def create_board(cursor, title):
 
 
 @db.use
+def insert_status(cursor, title):
+    query = """
+        INSERT INTO statuses (title) VALUES (%(title)s);
+    """
+    return cursor.execute(query, {
+        'title': title
+    })
+
+
+@db.use
 def create_card(cursor, data):
     query = """
         INSERT INTO cards (board_id, title, status_id) 
