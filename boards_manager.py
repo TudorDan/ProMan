@@ -52,6 +52,17 @@ def update_board(cursor, data):
 
 
 @db.use
+def update_status(cursor, data):
+    query = """
+        UPDATE statuses SET title = %(title)s WHERE id = %(id)s; 
+    """
+    return cursor.execute(query, {
+        'id': data['id'],
+        'title': data['title']
+    })
+
+
+@db.use
 def create_board(cursor, title):
     query = """
         INSERT INTO boards (title) VALUES (%(title)s);

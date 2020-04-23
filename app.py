@@ -27,6 +27,14 @@ def update_board():
     return jsonify({'success': True})
 
 
+@app.route('/api/update-status', methods=['POST'])
+def update_status():
+    request_content = request.json
+    data = {'id': request_content['id'], 'title': request_content['title']}
+    boards_manager.update_status(data)
+    return jsonify({'success': True})
+
+
 @app.route('/api/getdata')
 def get_data():
     data = [
@@ -65,7 +73,7 @@ def create_board():
     boards_manager.create_board(title)
     board_dict = boards_manager.get_board_id(title)
     board_id = board_dict['id']
-    print(board_id)
+
     boards_manager.insert_status('New', board_id)
     boards_manager.insert_status('In progress', board_id)
     boards_manager.insert_status('Testing', board_id)

@@ -22,7 +22,8 @@ function makeTableHeaders (statuses, boardid){
     for (let status of statuses) {
         let th = '';
         if (status.board_id === boardid) {
-            th += `<th scope="col" contenteditable="true"> ${status.title} </th>`;
+            th += `<th scope="col" id="status-title-` + status.id + `" contenteditable="true" 
+            onfocusout="updateStatusTitle(${status.id})"> ${status.title} </th>`;
             table.innerHTML += th;
         } else {
             th = ""
@@ -196,6 +197,32 @@ const sendStatus = async (data) => {
 
 }
 
+function updateStatusTitle(statusId) {
+    elementToSelect = "status-title-" + statusId;
+    titleValue = document.getElementById(elementToSelect);
+    console.log(titleValue);
+    data = {
+        'id': statusId,
+        'title': titleValue.innerText,
+    }
+
+    settings = {
+        'method': 'POST',
+        'headers': {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(data),
+    }
+
+    fetch('/api/update-status', settings)
+        .then((serverResponse) => {
+            return serverResponse.json();
+        })
+        .then((jsonResponse) => {
+            console.log(jsonResponse);
+        })
+}
 
 function updateBoardTitle(boardId) {
     elementToSelect = "board-title-" + boardId;
