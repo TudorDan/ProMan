@@ -5,7 +5,7 @@ import db
 def get_statuses(cursor):
     query = """
         SELECT *
-        FROM statuses ORDER BY id DESC;
+        FROM statuses ORDER BY id ;
     """
     cursor.execute(query)
     return cursor.fetchall()

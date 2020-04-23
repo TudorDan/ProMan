@@ -1,7 +1,8 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-    <script src="/static/js/app.js" defer></script>
+    <script type ="module" src="/static/js/app.js" defer></script>
+    <script type ="module" src="https://raw.githack.com/SortableJS/Sortable/master/Sortable.js" defer  ></script>
 {% endblock %}
 
 {% block content %}
@@ -19,9 +20,14 @@
                         <div class="card-header">
                             <h4 class="my-0 font-weight-normal">Boards</h4>
                         </div>
+                        <div id="left" class="container">
+                            <div id="right" class="container">
+
                         <div class="card-body" id="boards-container">
 
 
+                        </div>
+                        </div>
                         </div>
                     </div>
                </div>
@@ -29,6 +35,33 @@
             </div>
         </div>
         </div>
+    <div id="simpleList" class="list-group">
+    <div class="list-group-item">This is <a href="http://rubaxa.github.io/Sortable/">Sortable</a></div>
+    <div class="list-group-item">It works with Bootstrap...</div>
+    <div class="list-group-item">...out of the box.</div>
+    <div class="list-group-item">It has support for touch devices.</div>
+    <div class="list-group-item">Just drag some elements around.</div>
+  </div>
+
+
+  <!-- List with handle -->
+  <div id="listWithHandle" class="list-group">
+    <div class="list-group-item">
+      <span class="badge">14</span>
+      <span class="glyphicon glyphicon-move" aria-hidden="true"></span>
+      Drag me by the handle
+    </div>
+    <div class="list-group-item">
+      <span class="badge">2</span>
+      <span class="glyphicon glyphicon-move" aria-hidden="true"></span>
+      You can also select text
+    </div>
+    <div class="list-group-item">
+      <span class="badge">1</span>
+      <span class="glyphicon glyphicon-move" aria-hidden="true"></span>
+      Best of both worlds!
+    </div>
+  </div>
     </div>
 
 
