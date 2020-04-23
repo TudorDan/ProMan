@@ -114,7 +114,6 @@ function newColumn (boardid) {
     let button = document.querySelector('#sendStatusTitle');
     button.addEventListener('click', (e) => {
         let title = document.querySelector('#StatusTitle').value;
-        console.log(title)
         let titleDict = { 'title': title,
                           'board_id' :boardid}
         sendStatus(titleDict);
