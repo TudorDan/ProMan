@@ -1,9 +1,34 @@
 url_api = 'http://127.0.0.1:5000/api/';
 url_boards = url_api + "get-boards";
 url_cards = url_api + "get-cards/";
+url_statuses = url_api + '/get-statuses';
 
 
 document.addEventListener("DOMContentLoaded", createBoards);
+
+function getStatuses(boardId) {
+    fetch(url_statuses)
+        .then((serverResponse) => {
+            return serverResponse.json();
+        })
+        .then((jsonResponse) => {
+            console.log(jsonResponse)
+            makeTableHeaders(jsonResponse, boardId);
+        });
+}
+
+function makeTableHeaders (statuses, boardid){
+    let table = document.querySelector(".tableHead-" + boardid)
+    for (let status of statuses) {
+        let th = '';
+        if (status.board_id === boardid) {
+            th += `<th scope="col" contenteditable="true"> ${status.title} </th>`;
+            table.innerHTML += th;
+        } else {
+            th = ""
+        }
+    }
+}
 
 function createBoards() {
     let button = document.querySelector('#sendBoardTitle');
@@ -35,6 +60,7 @@ function getBoards() {
             return serverResponse.json();
         })
         .then((jsonResponse) => {
+            console.log(jsonResponse);
             showBoards(jsonResponse);
         });
 }
@@ -127,10 +153,7 @@ function showBoards(boards) {
                     <table class="table table-bordered table-dark">
                         <thead >
                             <tr class="tableHead-${board.id}">
-                                <th>New</th>
-                                <th>In progress</th>
-                                <th>Testing</th>
-                                <th>Done</th>
+                                
                             </tr>
                         </thead>
                         <tbody class="tablebody-${board.id}"></tbody>
@@ -139,6 +162,7 @@ function showBoards(boards) {
             </div>
         </div>`
         boards_container.innerHTML += card_template;
+        getStatuses(board.id);
     }
 }
 
@@ -146,14 +170,14 @@ function newColumn(boardid) {
     let button = document.querySelector('#sendStatusTitle');
     button.addEventListener('click', (e) => {
         let title = document.querySelector('#statusTitle').value;
-        let titleDict = {'title': title}
+        let titleDict = {'title': title, 'board_id': boardid};
         sendStatus(titleDict);
-    });
 
-    let tablehead = document.querySelector(".tableHead-" + boardid)
-    console.log(tablehead)
-    let th = `<th class="col" contenteditable="true" style="width: 25%">Type status</th>`
-    tablehead.innerHTML += th;
+        let tablehead = document.querySelector(".tableHead-" + boardid);
+        console.log(tablehead);
+        let th = `<th class="col" contenteditable="true">${title}</th>`;
+        tablehead.innerHTML += th;
+    });
 }
 
 const sendStatus = async (data) => {

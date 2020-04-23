@@ -61,9 +61,15 @@ def update_card():
 @app.route('/api/create-board', methods=['POST'])
 def create_board():
     request_content = request.json
-    print(request_content)
     title = request_content['title']
     boards_manager.create_board(title)
+    board_dict = boards_manager.get_board_id(title)
+    board_id = board_dict['id']
+    print(board_id)
+    boards_manager.insert_status('New', board_id)
+    boards_manager.insert_status('In progress', board_id)
+    boards_manager.insert_status('Testing', board_id)
+    boards_manager.insert_status('Done', board_id)
     return jsonify({'success': True})
 
 
@@ -71,7 +77,8 @@ def create_board():
 def create_status():
     request_content = request.json
     title = request_content['title']
-    boards_manager.insert_status(title)
+    board_id = request_content['board_id']
+    boards_manager.insert_status(title, board_id)
     return jsonify({'success': True})
 
 
