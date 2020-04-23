@@ -22,8 +22,9 @@ function makeTableHeaders (statuses, boardid){
     for (let status of statuses) {
         let th = '';
         if (status.board_id === boardid) {
-            th += `<th scope="col" id="status-title-` + status.id + `" contenteditable="true" 
-            onfocusout="updateStatusTitle(${status.id})" class="status-${boardid}"> ${status.title} </th>`;
+                th += `<th scope="col" id="status-title-` + status.id + `" contenteditable="true" 
+            onfocusout="updateStatusTitle(${status.id})" class="status-${boardid} "> ${status.title} </th>`;
+
             table.innerHTML += th;
         } else {
             th = ""
@@ -86,7 +87,6 @@ function getBoards() {
             return serverResponse.json();
         })
         .then((jsonResponse) => {
-            console.log(jsonResponse);
             showBoards(jsonResponse);
         });
 }
@@ -114,7 +114,7 @@ function showCards(cards, boardId) {
         let tr = '';
         for (let status of table_header) {
             if (card.status_name === status.innerText) {
-                tr += `<td>${card.card_title}</td>`;
+                tr += `<td class="table-danger">${card.card_title}</td>`;
             } else {
                 tr += `<td></td>`;
             }
@@ -151,12 +151,12 @@ function showCards(cards, boardId) {
 //     }
 // }
 
-function addCardsToColumn(container) {
-    const cardElement = createCard(
-        'New',
-        'Task 1');
-    document.querySelector(`#${container}`).appendChild(cardElement);
-}
+// function addCardsToColumn(container) {
+//     const cardElement = createCard(
+//         'New',
+//         'Task 1');
+//     document.querySelector(`#${container}`).appendChild(cardElement);
+// }
 
 // const createCard = function (title, text) {
 //     const container = document.createElement('div');
@@ -185,7 +185,7 @@ function showBoards(boards) {
     for (board of boards) {
         boards_container = document.getElementById('boards-container');
         card_template = `
-        <div class="card mb-2">
+        <div class="card mb-2 bg-light">
             <div class="card-body" >
                 <h5 class="card-title" id="board-title-` + board.id + `" contenteditable="true" 
                 onfocusout="updateBoardTitle(` + board.id + `)">` + board.title + `</h5>
@@ -200,10 +200,10 @@ function showBoards(boards) {
                 data-target="#statusModal" onclick="newColumn(${board.id})">Add Column</button><br><br>
                 
                  <div class="card card-body mb-5" >
-                    <button type="button" class="btn btn-outline-success taskButton" data-toggle="modal"
+                    <button type="button" class="btn btn-success btn-sm ml-2 mb-2 taskButton" data-toggle="modal"
                     data-target="#cardModal" onclick="createCard(${board.id})">New Card</button>
-                    <table class="table table-bordered table-dark">
-                        <thead >
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-primary">
                             <tr class="tableHead-${board.id}">
                                 
                             </tr>
@@ -304,3 +304,5 @@ function updateBoardTitle(boardId) {
 
 
 getBoards();
+
+
