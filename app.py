@@ -92,7 +92,7 @@ def create_status():
 
 # receives (board_id, title, status_id)
 # returns json
-@app.route('/api/create-card')
+@app.route('/api/create-card', methods=['POST'])
 def create_card():
     request_content = request.json
     data = {
@@ -100,6 +100,7 @@ def create_card():
         'board_id': request_content['board_id'],
         'status_id': request_content['status_id']
     }
+    print(data)
     boards_manager.create_card(data)
     return jsonify({'success': True})
 

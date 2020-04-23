@@ -23,7 +23,7 @@ function makeTableHeaders (statuses, boardid){
         let th = '';
         if (status.board_id === boardid) {
             th += `<th scope="col" id="status-title-` + status.id + `" contenteditable="true" 
-            onfocusout="updateStatusTitle(${status.id})"> ${status.title} </th>`;
+            onfocusout="updateStatusTitle(${status.id})" class="status-${boardid}"> ${status.title} </th>`;
             table.innerHTML += th;
         } else {
             th = ""
@@ -42,6 +42,31 @@ function createBoards() {
 
 const sendBoard = async (data) => {
     const location = window.location + 'api/create-board'
+    const setting =
+        {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        }
+    const response = await fetch(location, setting)
+    if (!response.ok) throw Error(response.message);
+}
+
+
+function createCard(boardId) {
+    let button = document.querySelector('#sendCardTitle');
+    button.addEventListener('click', (e) => {
+        let title = document.querySelector('#cardTitle').value;
+        let titleDict = {'title': title, 'board_id': boardId, 'status_id': 1}
+        sendCard(titleDict);
+    });
+}
+
+const sendCard = async (data) => {
+    const location = window.location + 'api/create-card';
     const setting =
         {
             method: 'POST',
@@ -74,33 +99,57 @@ function getCardsForBoard(id) {
         })
         .then((jsonResponse) => {
             console.table(jsonResponse);
-            showCards(jsonResponse);
+            showCards(jsonResponse, id);
         });
 
 }
 
-function showCards(cards) {
+function showCards(cards, boardId) {
+    let card_container = document.querySelector('.tablebody-' + boardId);
+    card_container.innerHTML = '';
     for (let card of cards) {
-        let table_header = document.querySelector('.tableHead-' + card.board_id);
-        let len = table_header.children.length;
-        let card_container = document.querySelector('.tablebody-' + card.board_id);
-        card_container.innerHTML = '';
+
+        let table_header = document.querySelectorAll('.status-' + card.board_id);
+
         let tr = '';
-        for (let i = 1; i <= len; i++) {
-            if (parseInt(card.status_id) === i) {
+        for (let status of table_header) {
+            if (card.status_name === status.innerText) {
                 tr += `<td>${card.card_title}</td>`;
             } else {
                 tr += `<td></td>`;
             }
         }
         let card_template = `
-        <tr>
-            ${tr}
-        </tr>
+        <tr>${tr}</tr>
         `;
         card_container.innerHTML += card_template;
     }
 }
+
+// function showCards(cards) {
+//     for (let card of cards) {
+//         console.log(card);
+//         let table_header = document.querySelector('.tableHead-' + card.board_id);
+//         console.log(table_header);
+//         let len = table_header.children.length;
+//         let card_container = document.querySelector('.tablebody-' + card.board_id);
+//         card_container.innerHTML = '';
+//         let tr = '';
+//         for (let i = 1; i <= len; i++) {
+//             if (parseInt(card.status_id) === i) {
+//                 tr += `<td>${card.card_title}</td>`;
+//             } else {
+//                 tr += `<td></td>`;
+//             }
+//         }
+//         let card_template = `
+//         <tr>
+//             ${tr}
+//         </tr>
+//         `;
+//         card_container.innerHTML += card_template;
+//     }
+// }
 
 function addCardsToColumn(container) {
     const cardElement = createCard(
@@ -109,27 +158,28 @@ function addCardsToColumn(container) {
     document.querySelector(`#${container}`).appendChild(cardElement);
 }
 
-const createCard = function (title, text) {
-    const container = document.createElement('div');
-    container.classList.add('card');
+// const createCard = function (title, text) {
+//     const container = document.createElement('div');
+//     container.classList.add('card');
+//
+//     const cardBody = document.createElement('div');
+//     cardBody.classList.add('card-body');
+//
+//     const cardTitle = document.createElement('h5');
+//     cardTitle.classList.add('card-title');
+//     cardTitle.textContent = title;
+//     cardBody.appendChild(cardTitle);
+//
+//     const cardText = document.createElement('p');
+//     cardText.classList.add('card-text');
+//     cardText.textContent = text;
+//     cardBody.appendChild(cardText);
+//
+//     container.appendChild(cardBody);
+//
+//     return container;
+// };
 
-    const cardBody = document.createElement('div');
-    cardBody.classList.add('card-body');
-
-    const cardTitle = document.createElement('h5');
-    cardTitle.classList.add('card-title');
-    cardTitle.textContent = title;
-    cardBody.appendChild(cardTitle);
-
-    const cardText = document.createElement('p');
-    cardText.classList.add('card-text');
-    cardText.textContent = text;
-    cardBody.appendChild(cardText);
-
-    container.appendChild(cardBody);
-
-    return container;
-};
 
 function showBoards(boards) {
     for (board of boards) {
@@ -150,7 +200,8 @@ function showBoards(boards) {
                 data-target="#statusModal" onclick="newColumn(${board.id})">Add Column</button><br><br>
                 
                  <div class="card card-body mb-5" >
-                    <button type="button" class="btn btn-outline-success taskButton">Add Card</button>
+                    <button type="button" class="btn btn-outline-success taskButton" data-toggle="modal"
+                    data-target="#cardModal" onclick="createCard(${board.id})">New Card</button>
                     <table class="table table-bordered table-dark">
                         <thead >
                             <tr class="tableHead-${board.id}">
@@ -174,10 +225,10 @@ function newColumn(boardid) {
         let titleDict = {'title': title, 'board_id': boardid};
         sendStatus(titleDict);
 
-        let tablehead = document.querySelector(".tableHead-" + boardid);
-        console.log(tablehead);
-        let th = `<th class="col" contenteditable="true">${title}</th>`;
-        tablehead.innerHTML += th;
+        // let tablehead = document.querySelector(".tableHead-" + boardid);
+        // console.log(tablehead);
+        // let th = `<th class="col" contenteditable="true">${title}</th>`;
+        // tablehead.innerHTML += th;
     });
 }
 

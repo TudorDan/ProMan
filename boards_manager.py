@@ -86,13 +86,14 @@ def insert_status(cursor, title, board_id):
 @db.use
 def create_card(cursor, data):
     query = """
-        INSERT INTO cards (board_id, title, status_id) 
-            VALUES (%(board_id)s,%(title)s, %(status_id)s);
+        INSERT INTO cards (board_id, title, status_id, rank) 
+            VALUES (%(board_id)s,%(title)s, %(status_id)s, %(rank)s);
     """
     return cursor.execute(query, {
         'board_id': data['board_id'],
         'title': data['title'],
-        'status_id': data['status_id']
+        'status_id': data['status_id'],
+        'rank': 0
     })
 
 
