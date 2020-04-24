@@ -107,6 +107,7 @@ function getCardsForBoard(id) {
 function showCards(cards, boardId) {
     let card_container = document.querySelector('.tablebody-' + boardId);
     card_container.innerHTML = '';
+    let i = 1;
     for (let card of cards) {
 
         let table_header = document.querySelectorAll('.status-' + card.board_id);
@@ -114,9 +115,12 @@ function showCards(cards, boardId) {
         let tr = '';
         for (let status of table_header) {
             if (card.status_name === status.innerText) {
-                tr += `<td class="table-danger">${card.card_title}</td>`;
+                tr += `<td class="table-danger" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <span draggable="true" id="cardDrag-${i}" ondragstart="drag(event)">${card.card_title}</span>
+                        </td>`;
+                i++;
             } else {
-                tr += `<td></td>`;
+                tr += `<td ondrop="drop(event)" ondragover="allowDrop(event)"></td>`;
             }
         }
         let card_template = `
@@ -124,6 +128,20 @@ function showCards(cards, boardId) {
         `;
         card_container.innerHTML += card_template;
     }
+}
+
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+  ev.preventDefault();
+  let data = ev.dataTransfer.getData("text");
+  ev.target.appendChild(document.getElementById(data));
 }
 
 // function showCards(cards) {
