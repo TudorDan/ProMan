@@ -114,7 +114,7 @@ function showCards(cards, boardId) {
         let tr = '';
         for (let status of table_header) {
             if (card.status_name === status.innerText) {
-                tr += `<td class="table-danger">${card.card_title}</td>`;
+                tr += `<td class="table-danger"><div class=”redips-drag”>${card.card_title}</div></td>`;
             } else {
                 tr += `<td></td>`;
             }
@@ -202,6 +202,7 @@ function showBoards(boards) {
                  <div class="card card-body mb-5" >
                     <button type="button" class="btn btn-success btn-sm ml-2 mb-2 taskButton" data-toggle="modal"
                     data-target="#cardModal" onclick="createCard(${board.id})">New Card</button>
+                     <div id=”redips-drag”> 
                     <table class="table table-bordered table-hover">
                         <thead class="table-primary">
                             <tr class="tableHead-${board.id}">
@@ -210,6 +211,7 @@ function showBoards(boards) {
                         </thead>
                         <tbody class="tablebody-${board.id}"></tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>`
